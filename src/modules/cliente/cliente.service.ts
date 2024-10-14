@@ -1,20 +1,39 @@
-import { Injectable } from '@nestjs/common';
-import { CreateClienteDto } from './dto/create-cliente.dto';
-import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { Like, Repository } from 'typeorm';
-import { Cliente } from './entities/cliente.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DistritoService } from '../distrito/distrito.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateClienteDto } from "./dto/create-cliente.dto";
+import { UpdateClienteDto } from "./dto/update-cliente.dto";
+import { Like, Not, Repository } from "typeorm";
+import { Cliente } from "./entities/cliente.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DistritoService } from "../distrito/distrito.service";
 
 @Injectable()
 export class ClienteService {
   constructor(
     @InjectRepository(Cliente)
     private readonly repo: Repository<Cliente>,
+    private readonly distritoService: DistritoService
   ) {}
 
-  create(createClienteDto: CreateClienteDto) {
-    return 'This action adds a new cliente';
+  async create(dto: CreateClienteDto) {
+    const findDoc = await this.repo.findOne({
+      where: { documento: dto.documento },
+    });
+    if (findDoc) {
+      return { message: "El documento ya existe" };
+    }
+
+    const findDistrito = await this.distritoService.findOne(dto.id_distrito);
+    if (!findDistrito) {
+      return { message: "El distrito no existe" };
+    }
+
+    const newCliente = this.repo.create({
+      ...dto,
+      distrito: findDistrito,
+    });
+
+    await this.repo.save(newCliente);
+    return this.findOneMap(newCliente.id);
   }
 
   async findAll(
@@ -23,24 +42,24 @@ export class ClienteService {
     documento: string,
     nombres: string,
     page: number,
-    limit: number,
+    limit: number
   ) {
-    if (tipo_doc === '0') {
-      tipo_doc = '';
+    if (tipo_doc === "0") {
+      tipo_doc = "";
     }
 
     if (!documento) {
-      documento = '';
+      documento = "";
     }
 
     if (!nombres) {
-      nombres = '';
+      nombres = "";
     }
 
     const [list, total] = await this.repo.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
-      relations: ['distrito'],
+      relations: ["distrito"],
       where: {
         activo,
         documento: Like(`%${documento}%`),
@@ -64,12 +83,51 @@ export class ClienteService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cliente`;
+  async findOneMap(id: number) {
+    const find = await this.findOne(id);
+    return {
+      ...find,
+      distrito: find.distrito.nombre,
+      id_distrito: find.distrito.id,
+    };
   }
 
-  update(id: number, updateClienteDto: UpdateClienteDto) {
-    return `This action updates a #${id} cliente`;
+  async findOne(id: number) {
+    const find = await this.repo.findOne({
+      where: { id },
+      relations: ["distrito"],
+    });
+    if (!find) {
+      throw new NotFoundException(`Cliente #${id} no encontrado`);
+    }
+    return find;
+  }
+
+  async update(id: number, dto: UpdateClienteDto) {
+    const find = await this.findOne(id);
+    const findDoc = await this.repo.findOne({
+      where: { documento: dto.documento, id: Not(id) },
+    });
+    if (findDoc) {
+      return { message: "El documento ya existe" };
+    }
+
+    const findDistrito = await this.distritoService.findOne(dto.id_distrito);
+    if (!findDistrito) {
+      return { message: "El distrito no existe" };
+    }
+
+    const updateCliente = await this.repo.preload({
+      id: find.id,
+      ...dto,
+      distrito: findDistrito,
+    })
+
+    await this.repo.save(updateCliente);
+
+    return this.findOneMap(id);
+
+    
   }
 
   remove(id: number) {

@@ -72,7 +72,8 @@ export class Cliente {
 
     @Column({
         type: 'char',
-        length: 1
+        length: 1,
+        default: 'S'
     })
     activo: string;
 
