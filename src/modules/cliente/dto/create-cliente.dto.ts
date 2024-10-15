@@ -27,7 +27,6 @@ export class CreateClienteDto {
   telefono: string;
 
   @IsString({ message: "El correo debe ser un texto" })
-  @IsNotEmpty({ message: "El correo no debe estar vacío" })
   correo: string;
 
   //Verificar que solo permita valores de M o F
@@ -47,10 +46,8 @@ export class CreateClienteDto {
   direc: string;
 
   @IsString({ message: "La referencia debe ser un texto" })
-  @IsNotEmpty({ message: "La referencia no debe estar vacía" })
   referencia: string;
 
   @IsString({ message: "La url_maps debe ser un texto" })
-  @IsNotEmpty({ message: "La url_maps no debe estar vacía" })
   url_maps: string;
 }
