@@ -73,10 +73,14 @@ export class RepartoService {
         relations: [
           "empresa",
           "cliente",
+          "cliente.distrito",
           "usuario",
           "items",
           "vehiculo",
           "comprobante",
+          "historialRepartos",
+          "historialRepartos.usuario",
+          "historialRepartos.tipoOperacion",
         ],
         order: { id: "DESC" },
         where: whereCondition,
@@ -88,11 +92,20 @@ export class RepartoService {
         if (r?.comprobante) {
           comp = `${r.comprobante.serie}-${r.comprobante.num_serie}`;
         }
+        // obtener por quien fue entregado
+        const entregado = r.historialRepartos.find(
+          (h) => h.tipoOperacion.id === 4
+        );
+        
         return {
           id: r.id,
           num_reparto: r.num_reparto,
           usuario: r.usuario.nombres,
+          entregado: entregado?.usuario?.nombres ?? null,
           cliente: r.cliente.nombres,
+          telefono: r.cliente.telefono,
+          direccion: r.cliente.direc,
+          distrito: r.cliente.distrito.nombre,
           fecha_creacion: r.fecha_creacion,
           estado: r.estado,
           activo: r.activo,

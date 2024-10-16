@@ -12,6 +12,7 @@ import { ItemReparto } from "./item-reparto.entity";
 import { Usuario } from "src/modules/admin/usuario/entities/usuario.entity";
 import { Vehiculo } from "./vehiculo.entity";
 import { Comprobante } from "src/modules/comprobante/entities/comprobante.entity";
+import { HistorialReparto } from "./historial-reparto.entity";
 
 @Entity({
   name: "reparto",
@@ -87,4 +88,10 @@ export class Reparto {
   @ManyToOne(() => Comprobante, (c) => c.repartos)
   @JoinColumn({ name: "id_comprobante" })
   comprobante: Comprobante;
+
+  @OneToMany(
+    () => HistorialReparto,
+    (historialReparto) => historialReparto.reparto
+  )
+  historialRepartos: HistorialReparto[];
 }

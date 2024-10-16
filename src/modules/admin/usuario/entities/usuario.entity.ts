@@ -1,4 +1,5 @@
 import { Empresa } from "src/modules/empresa/entities/empresa.entity";
+import { HistorialReparto } from "src/modules/reparto/entities/historial-reparto.entity";
 import { Reparto } from "src/modules/reparto/entities/reparto.entity";
 import {
   Column,
@@ -93,4 +94,10 @@ export class Usuario {
     (r) => r.usuario
   )
     repartos: Reparto[];
+
+    @OneToMany(
+        () => HistorialReparto,
+        (historialReparto) => historialReparto.usuario
+    )
+    historialRepartos: HistorialReparto[]
 }
