@@ -9,6 +9,8 @@ import { EmpresaModule } from './modules/empresa/empresa.module';
 import { Empresa } from './modules/empresa/entities/empresa.entity';
 import { RepartoModule } from './modules/reparto/reparto.module';
 import { ClienteModule } from './modules/cliente/cliente.module';
+import { UsuarioModule } from './modules/admin/usuario/usuario.module';
+import { ComprobanteModule } from './modules/comprobante/comprobante.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { ClienteModule } from './modules/cliente/cliente.module';
     EmpresaModule,
     RepartoModule,
     ClienteModule,
+    UsuarioModule,
+    ComprobanteModule,
   ],
   controllers: [],
   providers: [],

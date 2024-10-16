@@ -1,42 +1,134 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
-import { CreateRepartoDto } from './dto/create-reparto.dto';
-import { UpdateRepartoDto } from './dto/update-reparto.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Reparto } from './entities/reparto.entity';
-import { Repository } from 'typeorm';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
+import { CreateRepartoDto } from "./dto/create-reparto.dto";
+import { UpdateRepartoDto } from "./dto/update-reparto.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Reparto } from "./entities/reparto.entity";
+import { Between, Like, Repository } from "typeorm";
 
 @Injectable()
 export class RepartoService {
   constructor(
     @InjectRepository(Reparto)
-    private readonly repo: Repository<Reparto>,
+    private readonly repo: Repository<Reparto>
   ) {}
 
   create(createRepartoDto: CreateRepartoDto) {
-    return 'This action adds a new reparto';
+    return "This action adds a new reparto";
   }
 
-  async findAll() {
+  async findAll(
+    page: number,
+    limit: number,
+    activo: string,
+    estado: string,
+    num_reparto: number,
+    nom_cliente: string,
+    nom_usuario: string,
+    id_vehiculo: number,
+    desde: string,
+    hasta: string
+  ) {
     try {
-      const list = await this.repo.find({ relations: ['empresa'] });
-      return list.map((r) => {
-        const id_ruc = r.empresa.id;
-        delete r.empresa;
+      const whereCondition: any = {};
+
+      // Condiciones dinámicas para los filtros
+      if (activo) {
+        whereCondition.activo = Like(`%${activo}%`);
+      }
+      if (estado) {
+        whereCondition.estado = Like(`%${estado}%`);
+      }
+      if (num_reparto) {
+        whereCondition.num_reparto = num_reparto; // Es un número, no necesita Like
+      }
+      if (nom_cliente) {
+        whereCondition.cliente = { nombres: Like(`%${nom_cliente}%`) };
+      }
+      if (nom_usuario) {
+        whereCondition.usuario = { nombres: Like(`%${nom_usuario}%`) };
+      }
+
+      if (id_vehiculo) {
+        whereCondition.vehiculo = { id: id_vehiculo };
+      }
+
+      if (desde && hasta) {
+        const desdeDate = new Date(desde);
+        desdeDate.setUTCHours(0, 0, 0, 0);
+
+        // Convertimos hasta a las 23:59:59 del día
+        const hastaDate = new Date(hasta);
+        hastaDate.setUTCHours(23, 59, 59, 999);
+
+        whereCondition.fecha_creacion = Between(desdeDate, hastaDate);
+      }
+
+      const [list, total] = await this.repo.findAndCount({
+        skip: (page - 1) * limit,
+        take: limit,
+        relations: [
+          "empresa",
+          "cliente",
+          "usuario",
+          "items",
+          "vehiculo",
+          "comprobante",
+        ],
+        order: { id: "DESC" },
+        where: whereCondition,
+      });
+      const listMap = list.map((r) => {
+        const totalAdicional = r.items.reduce((acc, i) => acc + i.adicional, 0);
+        const totalPrecio = r.items.reduce((acc, i) => acc + i.precio, 0);
+        let comp: any = null;
+        if (r?.comprobante) {
+          comp = `${r.comprobante.serie}-${r.comprobante.num_serie}`;
+        }
         return {
-          ...r,
-          cobro_adicional: Number(r.cobro_adicional),
-          id_ruc,
+          id: r.id,
+          num_reparto: r.num_reparto,
+          usuario: r.usuario.nombres,
+          cliente: r.cliente.nombres,
+          fecha_creacion: r.fecha_creacion,
+          estado: r.estado,
+          activo: r.activo,
+          costo_adicional: +totalAdicional,
+          costo_reparto: +totalPrecio,
+          comprobante: comp,
+          items: r.items.map((i) => ({
+            id: i.id,
+            num_guia: i.num_guia,
+            detalle: i.detalle,
+            precio: Number(i.precio),
+            adicional: Number(i.adicional),
+            clave: i.clave,
+          })),
         };
       });
+
+      return {
+        total: +total,
+        page: +page,
+        limit: +limit,
+        totalPages: Math.ceil(total / limit),
+        data: listMap,
+      };
     } catch (error) {
       console.log(error?.message);
-      throw new InternalServerErrorException('Error en el servidor');
+      throw new InternalServerErrorException("Error en el servidor");
     }
   }
 
   async findOne(id: number) {
     try {
-      const reparto = await this.repo.findOne({ where: { id }, relations: ['empresa'] });
+      const reparto = await this.repo.findOne({
+        where: { id },
+        relations: ["empresa"],
+      });
       if (!reparto) {
         throw new NotFoundException(`Reparto con id ${id} no encontrado`);
       }
@@ -47,7 +139,7 @@ export class RepartoService {
         id_ruc,
       };
     } catch (error) {
-      throw new InternalServerErrorException('Error en el servidor');
+      throw new InternalServerErrorException("Error en el servidor");
     }
   }
 

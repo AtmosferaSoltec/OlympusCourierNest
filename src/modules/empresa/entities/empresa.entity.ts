@@ -1,5 +1,7 @@
+import { Usuario } from 'src/modules/admin/usuario/entities/usuario.entity';
 import { Distrito } from 'src/modules/distrito/entities/distrito.entity';
 import { Reparto } from 'src/modules/reparto/entities/reparto.entity';
+import { Vehiculo } from 'src/modules/reparto/entities/vehiculo.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({
@@ -86,4 +88,16 @@ export class Empresa {
 
   @OneToMany(() => Distrito, (d) => d.empresa)
   distritos: Distrito[];
+
+  @OneToMany(
+    () => Usuario,
+    (u) => u.empresa
+  )
+  usuarios: Usuario[];
+
+  @OneToMany(
+    () => Vehiculo,
+    (v) => v.empresa
+  )
+  vehiculos: Vehiculo[];
 }

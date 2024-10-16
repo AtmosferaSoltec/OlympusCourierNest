@@ -1,4 +1,4 @@
-import { Distrito } from "src/modules/distrito/entities/distrito.entity";
+import { Empresa } from "src/modules/empresa/entities/empresa.entity";
 import { Reparto } from "src/modules/reparto/entities/reparto.entity";
 import {
   Column,
@@ -9,16 +9,10 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-@Entity({ name: "cliente" })
-export class Cliente {
+@Entity("usuario")
+export class Usuario {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column({
-    type: "char",
-    length: 1,
-  })
-  cod_tipodoc: string;
 
   @Column({
     type: "varchar",
@@ -31,45 +25,38 @@ export class Cliente {
   @Column({
     type: "varchar",
     length: 255,
+    nullable: false,
   })
   nombres: string;
 
   @Column({
     type: "varchar",
+    length: 255,
+    nullable: true,
+    default: null,
+  })
+  apellidos: string;
+
+  @Column({
+    type: "varchar",
     length: 15,
-    nullable: false,
+    unique: true,
   })
   telefono: string;
 
   @Column({
     type: "varchar",
     length: 255,
+    unique: true,
   })
   correo: string;
 
   @Column({
-    type: "char",
-    length: 1,
+    type: "date",
+    nullable: true,
+    default: true,
   })
-  genero: string;
-
-  @Column({
-    type: "varchar",
-    length: 255,
-  })
-  direc: string;
-
-  @Column({
-    type: "varchar",
-    length: 255,
-  })
-  referencia: string;
-
-  @Column({
-    type: "varchar",
-    length: 255,
-  })
-  url_maps: string;
+  fecha_nac: Date;
 
   @Column({
     type: "timestamp",
@@ -78,16 +65,32 @@ export class Cliente {
   fecha_creacion: Date;
 
   @Column({
+    type: "varchar",
+    length: 255,
+  })
+  clave: string;
+
+  @Column({
+    type: "char",
+    length: 1,
+    default: null,
+  })
+  cod_rol: string;
+
+  @Column({
     type: "char",
     length: 1,
     default: "S",
   })
   activo: string;
 
-  @ManyToOne(() => Distrito, (distrito) => distrito.clientes)
-  @JoinColumn({ name: "id_distrito" })
-  distrito: Distrito;
+  @ManyToOne(() => Empresa, (e) => e.usuarios)
+  @JoinColumn({ name: "id_ruc" })
+  empresa: Empresa;
 
-  @OneToMany(() => Reparto, (r) => r.cliente)
-  repartos: Reparto[];
+  @OneToMany(
+    () => Reparto,
+    (r) => r.usuario
+  )
+    repartos: Reparto[];
 }

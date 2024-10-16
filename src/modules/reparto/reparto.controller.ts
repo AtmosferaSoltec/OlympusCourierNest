@@ -1,9 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { RepartoService } from './reparto.service';
-import { CreateRepartoDto } from './dto/create-reparto.dto';
-import { UpdateRepartoDto } from './dto/update-reparto.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from "@nestjs/common";
+import { RepartoService } from "./reparto.service";
+import { CreateRepartoDto } from "./dto/create-reparto.dto";
+import { UpdateRepartoDto } from "./dto/update-reparto.dto";
 
-@Controller('reparto')
+@Controller("reparto")
 export class RepartoController {
   constructor(private readonly repartoService: RepartoService) {}
 
@@ -13,22 +22,44 @@ export class RepartoController {
   }
 
   @Get()
-  findAll() {
-    return this.repartoService.findAll();
+  findAll(
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 10,
+    @Query("activo") activo: string,
+    @Query("estado") estado: string,
+    @Query("num_reparto") num_reparto: number,
+    @Query("nom_cliente") nom_cliente: string,
+    @Query("nom_usuario") nom_usuario: string,
+    @Query("id_vehiculo") id_vehiculo: number,
+    @Query("desde") desde: string,
+    @Query("hasta") hasta: string
+  ) {
+    return this.repartoService.findAll(
+      page,
+      limit,
+      activo,
+      estado,
+      num_reparto,
+      nom_cliente,
+      nom_usuario,
+      id_vehiculo,
+      desde,
+      hasta
+    );
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.repartoService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRepartoDto: UpdateRepartoDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateRepartoDto: UpdateRepartoDto) {
     return this.repartoService.update(+id, updateRepartoDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.repartoService.remove(+id);
   }
 }
