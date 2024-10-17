@@ -83,8 +83,9 @@ export class RepartoService {
           "historialRepartos.tipoOperacion",
         ],
         order: { id: "DESC" },
-        where: whereCondition,
+        where: whereCondition
       });
+      
       const listMap = list.map((r) => {
         const totalAdicional = r.items.reduce((acc, i) => acc + i.adicional, 0);
         const totalPrecio = r.items.reduce((acc, i) => acc + i.precio, 0);
@@ -100,12 +101,12 @@ export class RepartoService {
         return {
           id: r.id,
           num_reparto: r.num_reparto,
-          usuario: r.usuario.nombres,
+          usuario: r.usuario?.nombres,
           entregado: entregado?.usuario?.nombres ?? null,
-          cliente: r.cliente.nombres,
-          telefono: r.cliente.telefono,
-          direccion: r.cliente.direc,
-          distrito: r.cliente.distrito.nombre,
+          cliente: r.cliente?.nombres,
+          telefono: r.cliente?.telefono,
+          direccion: r.cliente?.direc,
+          distrito: r.cliente?.distrito?.nombre,
           fecha_creacion: r.fecha_creacion,
           estado: r.estado,
           activo: r.activo,
