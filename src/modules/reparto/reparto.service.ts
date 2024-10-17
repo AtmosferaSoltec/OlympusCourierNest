@@ -27,7 +27,7 @@ export class RepartoService {
     estado: string,
     num_reparto: number,
     nom_cliente: string,
-    nom_usuario: string,
+    id_usuario: number,
     id_vehiculo: number,
     desde: string,
     hasta: string
@@ -48,8 +48,8 @@ export class RepartoService {
       if (nom_cliente) {
         whereCondition.cliente = { nombres: Like(`%${nom_cliente}%`) };
       }
-      if (nom_usuario) {
-        whereCondition.usuario = { nombres: Like(`%${nom_usuario}%`) };
+      if (id_usuario) {
+        whereCondition.usuario = { id: id_usuario };
       }
 
       if (id_vehiculo) {
