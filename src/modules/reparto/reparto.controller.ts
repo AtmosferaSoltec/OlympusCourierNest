@@ -30,6 +30,7 @@ export class RepartoController {
     @Query("num_reparto") num_reparto: number,
     @Query("nom_cliente") nom_cliente: string,
     @Query("id_usuario") id_usuario: number,
+    @Query("id_subido") id_subido: number,
     @Query("id_vehiculo") id_vehiculo: number,
     @Query("desde") desde: string,
     @Query("hasta") hasta: string
@@ -42,6 +43,7 @@ export class RepartoController {
       num_reparto,
       nom_cliente,
       id_usuario,
+      id_subido,
       id_vehiculo,
       desde,
       hasta

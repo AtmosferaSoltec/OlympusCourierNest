@@ -28,6 +28,7 @@ export class RepartoService {
     num_reparto: number,
     nom_cliente: string,
     id_usuario: number,
+    id_subido: number,
     id_vehiculo: number,
     desde: string,
     hasta: string
@@ -48,10 +49,7 @@ export class RepartoService {
       if (nom_cliente) {
         whereCondition.cliente = { nombres: Like(`%${nom_cliente}%`) };
       }
-      if (id_usuario) {
-        whereCondition.usuario = { id: id_usuario };
-      }
-
+      
       if (id_vehiculo) {
         whereCondition.vehiculo = { id: id_vehiculo };
       }
@@ -86,22 +84,31 @@ export class RepartoService {
         where: whereCondition
       });
       
-      const listMap = list.map((r) => {
+      let listMap = list.map((r) => {
         const totalAdicional = r.items.reduce((acc, i) => acc + i.adicional, 0);
         const totalPrecio = r.items.reduce((acc, i) => acc + i.precio, 0);
         let comp: any = null;
         if (r?.comprobante) {
           comp = `${r.comprobante.serie}-${r.comprobante.num_serie}`;
         }
+
+        //obtener por quien fue subido
+        const subido = r.historialRepartos.find(
+          (h) => h.tipoOperacion.id === 5
+        );
+
         // obtener por quien fue entregado
         const entregado = r.historialRepartos.find(
           (h) => h.tipoOperacion.id === 4
         );
         
-        return {
+        const reparto = {
           id: r.id,
           num_reparto: r.num_reparto,
+          id_usuario: r.usuario?.id,
           usuario: r.usuario?.nombres,
+          id_subido: subido?.usuario?.id ?? null,
+          subido: subido?.usuario?.nombres ?? null,
           entregado: entregado?.usuario?.nombres ?? null,
           cliente: r.cliente?.nombres,
           telefono: r.cliente?.telefono,
@@ -122,7 +129,17 @@ export class RepartoService {
             clave: i.clave,
           })),
         };
+
+        return reparto;
       });
+
+      if (id_usuario) {
+        listMap = listMap.filter((r) => r.id_usuario == id_usuario);
+      }
+
+      if (id_subido) {
+        listMap = listMap.filter((r) => r.id_subido == id_subido);
+      }
 
       return {
         total: +total,
