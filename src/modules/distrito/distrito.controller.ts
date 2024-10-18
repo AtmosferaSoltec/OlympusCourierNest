@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { DistritoService } from './distrito.service';
 import { CreateDistritoDto } from './dto/create-distrito.dto';
 import { UpdateDistritoDto } from './dto/update-distrito.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('distrito')
 export class DistritoController {
@@ -12,6 +13,7 @@ export class DistritoController {
     return this.distritoService.create(createDistritoDto);
   }
 
+  //@UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.distritoService.findAll();
