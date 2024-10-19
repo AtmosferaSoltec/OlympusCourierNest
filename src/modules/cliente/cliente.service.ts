@@ -66,6 +66,9 @@ export class ClienteService {
         cod_tipodoc: Like(`%${tipo_doc}%`),
         nombres: Like(`%${nombres}%`),
       },
+      order: {
+        id: "DESC",
+      },
     });
 
     const mappedList = list.map((c) => ({
@@ -81,6 +84,15 @@ export class ClienteService {
       totalPages: Math.ceil(total / limit),
       data: mappedList,
     };
+  }
+
+  async search(term: string) {
+    const list = await this.repo.find({
+      where: [{ nombres: Like(`%${term}%`) }, { documento: Like(`%${term}%`) }],
+      select: ["id", "nombres"],
+      take: 10,
+    });
+    return list;
   }
 
   async findOneMap(id: number) {
@@ -121,13 +133,11 @@ export class ClienteService {
       id: find.id,
       ...dto,
       distrito: findDistrito,
-    })
+    });
 
     await this.repo.save(updateCliente);
 
     return this.findOneMap(id);
-
-    
   }
 
   remove(id: number) {
