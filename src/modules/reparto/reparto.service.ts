@@ -49,7 +49,7 @@ export class RepartoService {
       if (nom_cliente) {
         whereCondition.cliente = { nombres: Like(`%${nom_cliente}%`) };
       }
-      
+
       if (id_vehiculo) {
         whereCondition.vehiculo = { id: id_vehiculo };
       }
@@ -81,12 +81,18 @@ export class RepartoService {
           "historialRepartos.tipoOperacion",
         ],
         order: { id: "DESC" },
-        where: whereCondition
+        where: whereCondition,
       });
-      
+
       let listMap = list.map((r) => {
-        const totalAdicional = r.items.reduce((acc, i) => acc + i.adicional, 0);
-        const totalPrecio = r.items.reduce((acc, i) => acc + i.precio, 0);
+        const totalAdicional = r.items.reduce(
+          (acc, i) => acc + (Number(i.adicional) || 0),
+          0
+        );
+        const totalPrecio = r.items.reduce(
+          (acc, i) => acc + (Number(i.precio) || 0),
+          0
+        );
         let comp: any = null;
         if (r?.comprobante) {
           comp = `${r.comprobante.serie}-${r.comprobante.num_serie}`;
@@ -101,7 +107,7 @@ export class RepartoService {
         const entregado = r.historialRepartos.find(
           (h) => h.tipoOperacion.id === 4
         );
-        
+
         const reparto = {
           id: r.id,
           num_reparto: r.num_reparto,
