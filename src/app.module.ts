@@ -11,10 +11,19 @@ import { RepartoModule } from './modules/reparto/reparto.module';
 import { ClienteModule } from './modules/cliente/cliente.module';
 import { UsuarioModule } from './modules/admin/usuario/usuario.module';
 import { ComprobanteModule } from './modules/comprobante/comprobante.module';
+import { MetodoPagoModule } from './modules/admin/metodo-pago/metodo-pago.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+
+    JwtModule.register({
+      global: true,
+      secret: 'MiLlaveSecretaDeRepartos11*',
+      signOptions: { expiresIn: '4h' },
+    }),
+    
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -32,6 +41,7 @@ import { ComprobanteModule } from './modules/comprobante/comprobante.module';
     ClienteModule,
     UsuarioModule,
     ComprobanteModule,
+    MetodoPagoModule,
   ],
   controllers: [],
   providers: [],

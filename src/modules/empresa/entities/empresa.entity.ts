@@ -1,3 +1,4 @@
+import { MetodoPago } from 'src/modules/admin/metodo-pago/entities/metodo-pago.entity';
 import { Usuario } from 'src/modules/admin/usuario/entities/usuario.entity';
 import { Distrito } from 'src/modules/distrito/entities/distrito.entity';
 import { Reparto } from 'src/modules/reparto/entities/reparto.entity';
@@ -100,4 +101,10 @@ export class Empresa {
     (v) => v.empresa
   )
   vehiculos: Vehiculo[];
+
+  @OneToMany(
+    () => MetodoPago,
+    (mp) => mp.empresa
+  )
+  metodoPago: MetodoPago[];
 }
