@@ -55,14 +55,15 @@ export class RepartoService {
       }
 
       if (desde && hasta) {
-        const desdeDate = new Date(desde);
-        desdeDate.setUTCHours(0, 0, 0, 0);
-
-        // Convertimos hasta a las 23:59:59 del día
-        const hastaDate = new Date(hasta);
-        hastaDate.setUTCHours(23, 59, 59, 999);
-
-        whereCondition.fecha_creacion = Between(desdeDate, hastaDate);
+        if (desde == hasta) {
+          whereCondition.fecha_creacion = Like(`%${desde}%`);
+        } else {
+          const desdeDate = new Date(desde);
+          desdeDate.setUTCHours(0, 0, 0, 0);
+          const hastaDate = new Date(hasta);
+          hastaDate.setUTCHours(23, 59, 59, 999);
+          whereCondition.fecha_creacion = Between(desdeDate, hastaDate);
+        }
       }
 
       const [list, total] = await this.repo.findAndCount({
