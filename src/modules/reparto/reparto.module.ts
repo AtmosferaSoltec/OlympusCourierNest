@@ -7,9 +7,11 @@ import { ItemReparto } from "./entities/item-reparto.entity";
 import { Vehiculo } from "./entities/vehiculo.entity";
 import { TipoOperacion } from "./entities/tipo-operacion.entity";
 import { HistorialReparto } from "./entities/historial-reparto.entity";
+import { UsuarioModule } from "../admin/usuario/usuario.module";
 
 @Module({
   imports: [
+
     TypeOrmModule.forFeature([
       Reparto,
       ItemReparto,
@@ -17,6 +19,7 @@ import { HistorialReparto } from "./entities/historial-reparto.entity";
       TipoOperacion,
       HistorialReparto,
     ]),
+    UsuarioModule
   ],
   controllers: [RepartoController],
   providers: [RepartoService],

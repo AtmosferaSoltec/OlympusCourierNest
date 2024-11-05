@@ -7,10 +7,13 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
+  Req,
 } from "@nestjs/common";
 import { RepartoService } from "./reparto.service";
 import { CreateRepartoDto } from "./dto/create-reparto.dto";
 import { UpdateRepartoDto } from "./dto/update-reparto.dto";
+import { AuthGuard } from "src/guards/auth.guard";
 
 @Controller("reparto")
 export class RepartoController {
@@ -21,6 +24,7 @@ export class RepartoController {
     return this.repartoService.create(createRepartoDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll(
     @Query("page") page: number = 1,
@@ -33,9 +37,13 @@ export class RepartoController {
     @Query("id_subido") id_subido: number,
     @Query("id_vehiculo") id_vehiculo: number,
     @Query("desde") desde: string,
-    @Query("hasta") hasta: string
+    @Query("hasta") hasta: string,
+    @Req() req
   ) {
+    const { id } = req.user;
+
     return this.repartoService.findAll(
+      id,
       page,
       limit,
       activo,

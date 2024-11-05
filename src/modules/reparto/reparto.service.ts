@@ -8,12 +8,15 @@ import { UpdateRepartoDto } from "./dto/update-reparto.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Reparto } from "./entities/reparto.entity";
 import { Between, Like, Repository } from "typeorm";
+import { UsuarioService } from "../admin/usuario/usuario.service";
 
 @Injectable()
 export class RepartoService {
   constructor(
     @InjectRepository(Reparto)
-    private readonly repo: Repository<Reparto>
+    private readonly repo: Repository<Reparto>,
+
+    private readonly usuarioService: UsuarioService
   ) {}
 
   create(createRepartoDto: CreateRepartoDto) {
@@ -21,6 +24,7 @@ export class RepartoService {
   }
 
   async findAll(
+    idUser: number,
     page: number,
     limit: number,
     activo: string,
@@ -34,7 +38,11 @@ export class RepartoService {
     hasta: string
   ) {
     try {
+      const { empresa } = await this.usuarioService.findOne(idUser);
+      
       const whereCondition: any = {};
+
+      whereCondition.empresa = { id: empresa.id };
 
       // Condiciones dinámicas para los filtros
       if (activo) {
@@ -82,7 +90,7 @@ export class RepartoService {
           "historialRepartos.tipoOperacion",
         ],
         order: { id: "DESC" },
-        where: whereCondition,
+        where: whereCondition
       });
 
       let listMap = list.map((r) => {
