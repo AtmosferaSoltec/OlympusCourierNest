@@ -42,7 +42,7 @@ export class RepartoController {
   ) {
     const { id } = req.user;
 
-    return this.repartoService.findAll(
+    return this.repartoService.findAllNew(
       id,
       page,
       limit,
