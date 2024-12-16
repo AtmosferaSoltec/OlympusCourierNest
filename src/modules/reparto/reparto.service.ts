@@ -36,7 +36,8 @@ export class RepartoService {
     id_subido: number,
     id_vehiculo: number,
     desde: string,
-    hasta: string
+    hasta: string,
+    id_distrito: number
   ) {
     try {
       const { empresa } = await this.usuarioService.findOne(idUser);
@@ -70,6 +71,11 @@ export class RepartoService {
         query.andWhere("cliente.nombres LIKE :nom_cliente", {
           nom_cliente: `%${nom_cliente}%`,
         });
+
+        if(id_distrito) {
+          query.andWhere("cliente.distrito.id = :id_distrito", { id_distrito });
+        }
+
       if (id_vehiculo)
         query.andWhere("vehiculo.id = :id_vehiculo", { id_vehiculo });
       if (id_usuario)

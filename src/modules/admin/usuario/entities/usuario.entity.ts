@@ -71,12 +71,14 @@ export class Usuario {
   })
   clave: string;
 
+  
   @Column({
     type: "char",
     length: 1,
     default: null,
   })
   cod_rol: string;
+  
 
   @Column({
     type: "char",

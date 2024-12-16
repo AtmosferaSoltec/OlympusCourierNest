@@ -38,10 +38,11 @@ export class RepartoController {
     @Query("id_vehiculo") id_vehiculo: number,
     @Query("desde") desde: string,
     @Query("hasta") hasta: string,
+    @Query("id_distrito") id_distrito: number,
     @Req() req
   ) {
     const { id } = req.user;
-
+    
     return this.repartoService.findAllNew(
       id,
       page,
@@ -54,7 +55,8 @@ export class RepartoController {
       id_subido,
       id_vehiculo,
       desde,
-      hasta
+      hasta,
+      id_distrito
     );
   }
 

@@ -13,6 +13,7 @@ import { UsuarioModule } from './modules/admin/usuario/usuario.module';
 import { ComprobanteModule } from './modules/comprobante/comprobante.module';
 import { MetodoPagoModule } from './modules/admin/metodo-pago/metodo-pago.module';
 import { JwtModule } from '@nestjs/jwt';
+import { TipoUsuarioModule } from './modules/admin/tipo-usuario/tipo-usuario.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { JwtModule } from '@nestjs/jwt';
     UsuarioModule,
     ComprobanteModule,
     MetodoPagoModule,
+    TipoUsuarioModule,
   ],
   controllers: [],
   providers: [],
