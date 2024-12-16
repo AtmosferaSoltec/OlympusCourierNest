@@ -7,15 +7,17 @@ const httpsCertificate = () => {
     return null;
   }
 
+  const dir = "atmosfera-soltec.com";
+
   const httpsOptions = {
     key: fs.readFileSync(
       path.join(
-        '/etc/letsencrypt/live/sv-yaaugkfbpu.cloud.elastika.pe/privkey.pem',
+        `/etc/letsencrypt/live/${dir}/privkey.pem`,
       ),
     ),
     cert: fs.readFileSync(
       path.join(
-        '/etc/letsencrypt/live/sv-yaaugkfbpu.cloud.elastika.pe/fullchain.pem',
+        `/etc/letsencrypt/live/${dir}/fullchain.pem`,
       ),
     ),
   };
