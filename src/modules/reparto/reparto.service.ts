@@ -134,6 +134,7 @@ export class RepartoService {
           telefono: r.cliente?.telefono,
           direccion: r.cliente?.direc,
           distrito: r.cliente?.distrito?.nombre,
+          maps: r.cliente?.url_maps,
           fecha_creacion: r.fecha_creacion,
           estado: r.estado,
           activo: r.activo,
