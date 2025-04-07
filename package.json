@@ -8,7 +8,8 @@
   "scripts": {
     "build": "nest build",
     "start": "pm2 start dist/main.js --name Olympus-7979",
-    "dev": "nest start --watch"
+    "dev": "nest start --watch",
+    "restart": "pm2 restart Olympus-7979"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
