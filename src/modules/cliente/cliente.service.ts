@@ -67,7 +67,7 @@ export class ClienteService {
         nombres: Like(`%${nombres}%`),
       },
       order: {
-        id: "DESC",
+        fecha_creacion: "DESC",
       },
     });
 
